@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development Pathway — Victoria Herrera · S&amp;P Development Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#10263B;
+    --navy-deep:#0A1B2B;
+    --blue-line:#5F92B3;
+    --blue-line-soft:rgba(111,168,201,0.16);
+    --paper:#FBF9F4;
+    --paper-dim:#F2EFE6;
+    --ink:#1C2B36;
+    --ink-soft:#54626C;
+    --muted:#8A97A0;
+    --gold:#C7912A;
+    --gold-deep:#96690F;
+    --green:#3C7A5D;
+    --green-deep:#2B5A44;
+    --line:#DCD6C6;
+    --radius:2px;
+    --shadow: 0 1px 2px rgba(16,38,59,0.06), 0 8px 24px -12px rgba(16,38,59,0.18);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .mono{font-family:'IBM Plex Mono',monospace; letter-spacing:0.02em;}
+  a{color:inherit;}
+
+  /* ============ background blueprint grid (subtle, page-wide) ============ */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{position:relative; z-index:1; max-width:980px; margin:0 auto; padding:0 28px 120px;}
+
+  /* ============ sticky status rail ============ */
+  .statusbar{
+    position:sticky; top:0; z-index:50;
+    background:var(--navy-deep);
+    border-bottom:1px solid rgba(111,168,201,0.35);
+  }
+  .statusbar-inner{
+    max-width:980px; margin:0 auto; padding:0 28px;
+    display:flex; align-items:center; gap:18px;
+    height:56px;
+  }
+  .statusbar .brand{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;
+    color:#CFE0EC; letter-spacing:0.08em; white-space:nowrap;
+  }
+  .statusbar .brand span{color:var(--gold);}
+  .rail{flex:1; height:6px; background:rgba(255,255,255,0.1); border-radius:99px; overflow:hidden; position:relative;}
+  .rail-fill{height:100%; width:0%; background:linear-gradient(90deg, var(--gold-deep), var(--gold)); border-radius:99px; transition:width 0.6s cubic-bezier(.4,0,.2,1);}
+  .rail-pct{font-family:'IBM Plex Mono',monospace; font-size:13px; color:#EFD9A6; min-width:44px; text-align:right;}
+
+  /* ============ hero / title block ============ */
+  .hero{
+    background:var(--navy);
+    color:#fff;
+    padding:56px 40px 44px;
+    margin:0 -28px 0;
+    position:relative;
+    overflow:hidden;
+    border-bottom:3px solid var(--gold);
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--blue-line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--blue-line-soft) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .hero-inner{position:relative; z-index:1;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.18em;
+    color:#8FB4CC; text-transform:uppercase; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"◆"; color:var(--gold); font-size:10px;}
+  h1{
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size:clamp(28px,4.4vw,44px); line-height:1.08;
+    margin:14px 0 10px; letter-spacing:-0.01em;
+  }
+  .hero-sub{color:#B9CCDA; font-size:16px; max-width:560px; margin:0 0 28px;}
+
+  .titleblock{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    border:1px solid rgba(255,255,255,0.22); border-radius:var(--radius);
+    max-width:640px; overflow:hidden;
+  }
+  .titleblock div{
+    padding:10px 14px; border-right:1px solid rgba(255,255,255,0.22);
+  }
+  .titleblock div:last-child{border-right:none;}
+  .titleblock label{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:#7FA3BC; letter-spacing:0.1em; margin-bottom:4px; text-transform:uppercase;
+  }
+  .titleblock strong{font-size:13px; font-weight:600; color:#EFEFEA;}
+
+  /* ============ overall completion stamp ============ */
+  .stamp-wrap{position:absolute; top:40px; right:40px; z-index:2;}
+  .stamp{
+    width:118px; height:118px; border-radius:50%;
+    border:3px solid var(--muted); color:var(--muted);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    transform:rotate(-14deg); opacity:0.55;
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    transition:all 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  .stamp small{display:block; font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:9px; letter-spacing:0.12em; margin-top:2px;}
+  .stamp.complete{
+    border-color:var(--green); color:var(--green); opacity:1;
+    box-shadow:0 0 0 3px rgba(60,122,93,0.15);
+    animation:stampIn 0.5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes stampIn{0%{transform:rotate(-14deg) scale(0.5); opacity:0;} 60%{transform:rotate(-16deg) scale(1.08);} 100%{transform:rotate(-14deg) scale(1); opacity:1;}}
+
+  /* ============ roadmap nav ============ */
+  .roadmap{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+    margin:-30px 0 46px; position:relative; z-index:2;
+  }
+  .roadmap a{
+    text-decoration:none; background:var(--paper); border:1px solid var(--line);
+    border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:8px; transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .roadmap a:hover{transform:translateY(-2px); box-shadow:0 10px 28px -14px rgba(16,38,59,0.3);}
+  .roadmap-top{display:flex; align-items:center; justify-content:space-between;}
+  .roadmap-num{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:0.1em;}
+  .roadmap-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.06em;
+    padding:2px 8px; border-radius:99px; text-transform:uppercase; font-weight:600;
+  }
+  .badge-not{background:#EDEAE0; color:var(--ink-soft);}
+  .badge-progress{background:#FBEBCB; color:var(--gold-deep);}
+  .badge-done{background:#DCEEE3; color:var(--green-deep);}
+  .roadmap-title{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; color:var(--ink);}
+  .roadmap-bar{height:4px; background:var(--paper-dim); border-radius:99px; overflow:hidden;}
+  .roadmap-bar-fill{height:100%; background:var(--gold); border-radius:99px; transition:width 0.5s ease;}
+
+  /* ============ phase sheet ============ */
+  .sheet{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:40px;
+    box-shadow:var(--shadow);
+    scroll-margin-top:76px;
+    overflow:hidden;
+  }
+  .sheet-head{
+    background:var(--navy);
+    color:#fff;
+    padding:22px 28px;
+    display:flex; align-items:center; gap:20px;
+    position:relative;
+  }
+  .sheet-num{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:34px;
+    color:var(--gold); min-width:52px;
+  }
+  .sheet-head-text{flex:1;}
+  .sheet-head h2{font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:600; margin:0 0 4px;}
+  .sheet-head p{margin:0; color:#B9CCDA; font-size:14px; font-style:italic;}
+  .sheet-meta{
+    display:flex; gap:16px; align-items:center; flex-wrap:wrap;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:#CFE0EC;
+    border:1px solid rgba(255,255,255,0.28); border-radius:99px; padding:4px 11px;
+    white-space:nowrap;
+  }
+
+  .sheet-progress{padding:16px 28px; border-bottom:1px dashed var(--line); display:flex; align-items:center; gap:16px;}
+  .sheet-progress .rail{background:var(--paper-dim); flex:1;}
+  .sheet-progress .rail-fill{background:linear-gradient(90deg, var(--gold-deep), var(--gold));}
+  .sheet-progress .rail-pct{color:var(--gold-deep);}
+
+  .courses{padding:6px 0;}
+  .course{
+    display:grid; grid-template-columns:auto 1fr; gap:16px;
+    padding:20px 28px; border-bottom:1px solid var(--line);
+    transition:background 0.2s ease;
+  }
+  .course:last-child{border-bottom:none;}
+  .course.done{background:rgba(60,122,93,0.05);}
+
+  .check{
+    width:26px; height:26px; border-radius:5px; border:2px solid #C6BFAB;
+    background:#fff; cursor:pointer; flex-shrink:0; margin-top:2px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.15s ease; position:relative;
+  }
+  .check:hover{border-color:var(--gold);}
+  .check svg{width:15px; height:15px; opacity:0; transform:scale(0.5); transition:all 0.15s ease;}
+  .course.done .check{background:var(--green); border-color:var(--green);}
+  .course.done .check svg{opacity:1; transform:scale(1);}
+  .check svg path{stroke:#fff; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+
+  .course-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em;
+    color:var(--gold-deep); text-transform:uppercase; font-weight:600;
+  }
+  .course-name{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16.5px;
+    margin:2px 0 6px; color:var(--ink);
+  }
+  .course.done .course-name{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B7C2B9; text-decoration-thickness:1.5px;}
+  .course-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 10px; max-width:640px;}
+  .course-link{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    color:var(--navy); text-decoration:none; border-bottom:1px solid var(--blue-line);
+    padding-bottom:1px; transition:color 0.15s ease, border-color 0.15s ease;
+  }
+  .course-link:hover{color:var(--gold-deep); border-color:var(--gold-deep);}
+  .course-link svg{width:11px; height:11px;}
+
+  /* ============ milestone / sign-off ============ */
+  .milestone{
+    margin:0 28px 28px; padding:20px 22px;
+    border:1px solid var(--gold); border-left:5px solid var(--gold);
+    background:#FBF3E1; border-radius:var(--radius);
+  }
+  .milestone-head{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+  .milestone-head svg{width:15px; height:15px; flex-shrink:0;}
+  .milestone-head span{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--gold-deep); font-weight:600;
+  }
+  .milestone p{margin:0 0 16px; font-size:14.5px; color:#5C4A22; max-width:680px;}
+
+  .signoff-row{display:flex; flex-wrap:wrap; gap:12px;}
+  .signoff{
+    display:flex; align-items:center; gap:10px; padding:10px 14px;
+    background:#fff; border:1px solid #E3D4AC; border-radius:var(--radius);
+    cursor:pointer; flex:1; min-width:230px; transition:all 0.15s ease;
+  }
+  .signoff:hover{border-color:var(--gold);}
+  .signoff.checked{border-color:var(--green); background:#F1F8F4;}
+  .signoff.checked .check{background:var(--green); border-color:var(--green);}
+  .signoff.checked .check svg{opacity:1; transform:scale(1);}
+  .signoff .check{width:22px; height:22px; margin-top:0;}
+  .signoff-label{display:flex; flex-direction:column;}
+  .signoff-label strong{font-size:13px; font-family:'Inter',sans-serif; color:var(--ink);}
+  .signoff-label small{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); margin-top:2px;}
+
+  /* ============ notes ============ */
+  .notes{margin:0 28px 28px;}
+  .notes-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px; display:block;
+  }
+  .notes textarea{
+    width:100%; min-height:64px; resize:vertical;
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:#fff; padding:12px 14px; font-family:'Inter',sans-serif; font-size:14px;
+    color:var(--ink); line-height:1.5;
+  }
+  .notes textarea:focus{outline:none; border-color:var(--blue-line); box-shadow:0 0 0 3px rgba(111,168,201,0.18);}
+
+  /* ============ footer controls ============ */
+  .footer-bar{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    padding-top:20px; margin-top:8px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--muted);
+  }
+  .footer-bar .savenote{font-family:'IBM Plex Mono',monospace;}
+  .footer-bar .savenote strong{color:var(--ink-soft);}
+  .btn-reset{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft);
+    background:none; border:1px solid var(--line); border-radius:99px; padding:7px 16px;
+    cursor:pointer; transition:all 0.15s ease;
+  }
+  .btn-reset:hover{border-color:#C0524A; color:#C0524A;}
+
+  @media (max-width:720px){
+    .wrap{padding:0 16px 100px;}
+    .hero{padding:44px 20px 34px; margin:0 -16px;}
+    .titleblock{grid-template-columns:repeat(2,1fr);}
+    .stamp-wrap{position:static; margin:20px 0 0;}
+    .roadmap{grid-template-columns:1fr; margin-top:20px;}
+    .sheet-head{flex-wrap:wrap; padding:18px 18px;}
+    .sheet-meta{gap:8px;}
+    .course{padding:16px 18px; grid-template-columns:auto 1fr;}
+    .milestone, .notes{margin-left:18px; margin-right:18px;}
+    .signoff{min-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <div class="statusbar-inner">
+    <div class="brand">S&amp;P DEVELOPMENT GROUP <span>/</span> DEVELOPMENT PATHWAY</div>
+    <div class="rail"><div class="rail-fill" id="topRailFill"></div></div>
+    <div class="rail-pct mono" id="topRailPct">0%</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Administrator Development Program</div>
+      <h1>Professional Development<br>Pathway</h1>
+      <p class="hero-sub">A three-phase progress record for Victoria Herrera — built to be checked off, signed off, and referred back to as skills come online.</p>
+
+      <div class="titleblock">
+        <div><label>Prepared For</label><strong>Victoria Herrera</strong></div>
+        <div><label>Prepared By</label><strong>Samuel Love, CEO</strong></div>
+        <div><label>Program</label><strong>3 Phases · 9 Courses</strong></div>
+        <div><label>Status</label><strong id="tbStatus">In Progress</strong></div>
+      </div>
+    </div>
+
+    <div class="stamp-wrap">
+      <div class="stamp mono" id="overallStamp">
+        <div><span id="stampPct">0%</span><small>Complete</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="roadmap">
+    <a href="#phase-1">
+      <div class="roadmap-top"><span class="roadmap-num mono">SHEET 01</span><span class="roadmap-badge badge-not" id="badge-1">Not Started</span></div>
+      <div class="roadmap-title">Google Workspace Proficiency</div>
+      <div class="roadmap-bar"><div class="roadmap-bar-fill" id="roadbar-1" style="width:0%"></div></div>
+    </a>
+    <a href="#phase-2">
+      <div class="roadmap-top"><span class="roadmap-num mono">SHEET 02</span><span class="roadmap-badge badge-not" id="badge-2">Not Started</span></div>
+      <div class="roadmap-title">Project Management</div>
+      <div class="roadmap-bar"><div class="roadmap-bar-fill" id="roadbar-2" style="width:0%"></div></div>
+    </a>
+    <a href="#phase-3">
+      <div class="roadmap-top"><span class="roadmap-num mono">SHEET 03</span><span class="roadmap-badge badge-not" id="badge-3">Not Started</span></div>
+      <div class="roadmap-title">Executive Business Skills</div>
+      <div class="roadmap-bar"><div class="roadmap-bar-fill" id="roadbar-3" style="width:0%"></div></div>
+    </a>
+  </div>
+
+  <!-- ============ PHASE 1 ============ -->
+  <section class="sheet" id="phase-1" data-phase="1">
+    <div class="sheet-head">
+      <div class="sheet-num mono">01</div>
+      <div class="sheet-head-text">
+        <h2>Google Workspace Proficiency</h2>
+        <p>Build fluency in the daily tools that run the company</p>
+      </div>
+    </div>
+    <div class="sheet-meta" style="padding:14px 28px; background:var(--navy-deep);">
+      <span class="meta-chip">EST. 3–4 WEEKS</span>
+      <span class="meta-chip">3 COURSES</span>
+    </div>
+    <div class="sheet-progress">
+      <div class="rail"><div class="rail-fill" data-phasebar="1"></div></div>
+      <div class="rail-pct mono" data-phasepct="1">0%</div>
+    </div>
+
+    <div class="courses" data-courselist="1">
+      <div class="course" data-course="1-1">
+        <div class="check" data-check="1-1"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Foundations</div>
+          <div class="course-name">Google Workspace for Beginners</div>
+          <p class="course-desc">Foundational course covering Gmail, Google Drive, Docs, Sheets, and Calendar — the core toolset for daily administrative work.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://edu.exceedlms.com/student/catalog/list?category_ids=11039-google-workspace-for-beginners">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+      <div class="course" data-course="1-2">
+        <div class="check" data-check="1-2"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Skill Builder</div>
+          <div class="course-name">Google Workspace Skills Course Template</div>
+          <p class="course-desc">Structured, self-paced skill track from Google's official training platform to reinforce and extend Workspace fundamentals.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://www.skills.google/course_templates/779">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+      <div class="course" data-course="1-3">
+        <div class="check" data-check="1-3"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Applied AI</div>
+          <div class="course-name">Google AI Professional Certificate</div>
+          <p class="course-desc">Introduces practical AI tools and workflows within Google's ecosystem — directly applicable to the AI-assisted bidding system and document automation work already underway.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://www.coursera.org/professional-certificates/google-ai">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="2"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4l-6.3 4.4 2.3-7.2-6-4.4h7.6z"/></svg>
+        <span>Acceptance Criteria</span>
+      </div>
+      <p>Victoria independently manages Drive folder structures, builds Sheets templates, and uses AI tools to accelerate document and email workflows.</p>
+      <div class="signoff-row">
+        <div class="signoff" data-signoff="emp-1">
+          <div class="check" data-check="emp-1"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+          <div class="signoff-label"><strong>Victoria — ready for review</strong><small id="emp-1-date" class="mono">Not marked</small></div>
+        </div>
+        <div class="signoff" data-signoff="ceo-1">
+          <div class="check" data-check="ceo-1"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+          <div class="signoff-label"><strong>Samuel — sign-off approved</strong><small id="ceo-1-date" class="mono">Not marked</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <label class="notes-label">Notes &amp; check-in comments</label>
+      <textarea data-notes="1" placeholder="Add observations, blockers, or feedback for this phase..."></textarea>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 2 ============ -->
+  <section class="sheet" id="phase-2" data-phase="2">
+    <div class="sheet-head">
+      <div class="sheet-num mono">02</div>
+      <div class="sheet-head-text">
+        <h2>Project Management</h2>
+        <p>Bring structure, scheduling, and coordination discipline to TI projects</p>
+      </div>
+    </div>
+    <div class="sheet-meta" style="padding:14px 28px; background:var(--navy-deep);">
+      <span class="meta-chip">EST. 6–8 WEEKS</span>
+      <span class="meta-chip">2 COURSES</span>
+    </div>
+    <div class="sheet-progress">
+      <div class="rail"><div class="rail-fill" data-phasebar="2"></div></div>
+      <div class="rail-pct mono" data-phasepct="2">0%</div>
+    </div>
+
+    <div class="courses" data-courselist="2">
+      <div class="course" data-course="2-1">
+        <div class="check" data-check="2-1"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Certificate</div>
+          <div class="course-name">Google Project Management Professional Certificate</div>
+          <p class="course-desc">Industry-recognized certificate covering PM fundamentals: project lifecycle, scheduling, budgeting, risk management, stakeholder communication, and Agile basics.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://www.coursera.org/professional-certificates/google-project-management">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+      <div class="course" data-course="2-2">
+        <div class="check" data-check="2-2"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Industry Focus</div>
+          <div class="course-name">Construction Project Management</div>
+          <p class="course-desc">Applies PM fundamentals to the construction context — scheduling, cost control, and coordination concepts directly relevant to Columbia Place TI work.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://www.coursera.org/learn/construction-project-management">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="2"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4l-6.3 4.4 2.3-7.2-6-4.4h7.6z"/></svg>
+        <span>Acceptance Criteria</span>
+      </div>
+      <p>Victoria can independently maintain project timelines in Asana, track milestones across floors/phases, and flag schedule or budget risk before it escalates.</p>
+      <div class="signoff-row">
+        <div class="signoff" data-signoff="emp-2">
+          <div class="check" data-check="emp-2"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+          <div class="signoff-label"><strong>Victoria — ready for review</strong><small id="emp-2-date" class="mono">Not marked</small></div>
+        </div>
+        <div class="signoff" data-signoff="ceo-2">
+          <div class="check" data-check="ceo-2"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+          <div class="signoff-label"><strong>Samuel — sign-off approved</strong><small id="ceo-2-date" class="mono">Not marked</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <label class="notes-label">Notes &amp; check-in comments</label>
+      <textarea data-notes="2" placeholder="Add observations, blockers, or feedback for this phase..."></textarea>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 3 ============ -->
+  <section class="sheet" id="phase-3" data-phase="3">
+    <div class="sheet-head">
+      <div class="sheet-num mono">03</div>
+      <div class="sheet-head-text">
+        <h2>Executive Business Skills</h2>
+        <p>Develop business fundamentals and leadership capability</p>
+      </div>
+    </div>
+    <div class="sheet-meta" style="padding:14px 28px; background:var(--navy-deep);">
+      <span class="meta-chip">EST. 10–14 WEEKS</span>
+      <span class="meta-chip">2 COURSES</span>
+    </div>
+    <div class="sheet-progress">
+      <div class="rail"><div class="rail-fill" data-phasebar="3"></div></div>
+      <div class="rail-pct mono" data-phasepct="3">0%</div>
+    </div>
+
+    <div class="courses" data-courselist="3">
+      <div class="course" data-course="3-1">
+        <div class="check" data-check="3-1"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Specialization</div>
+          <div class="course-name">Business Foundations Specialization (Wharton)</div>
+          <p class="course-desc">Four-course foundation from Wharton covering finance, marketing, operations, and corporate strategy — a broad, credible base in core business disciplines.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://www.coursera.org/specializations/wharton-business-foundations">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+      <div class="course" data-course="3-2">
+        <div class="check" data-check="3-2"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+        <div>
+          <div class="course-tag">Leadership</div>
+          <div class="course-name">Complete Executive Leadership Specialization</div>
+          <p class="course-desc">Advanced leadership training focused on strategic decision-making, influence, and executive presence — preparing Victoria for expanded ownership of business operations.</p>
+          <a class="course-link" target="_blank" rel="noopener" href="https://www.coursera.org/specializations/complete-executive-leadership#outcomes">Open course <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="2"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4l-6.3 4.4 2.3-7.2-6-4.4h7.6z"/></svg>
+        <span>Acceptance Criteria</span>
+      </div>
+      <p>Victoria operates with executive-level business fluency, able to contribute to strategic decisions and take ownership of higher-level operational responsibilities.</p>
+      <div class="signoff-row">
+        <div class="signoff" data-signoff="emp-3">
+          <div class="check" data-check="emp-3"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+          <div class="signoff-label"><strong>Victoria — ready for review</strong><small id="emp-3-date" class="mono">Not marked</small></div>
+        </div>
+        <div class="signoff" data-signoff="ceo-3">
+          <div class="check" data-check="ceo-3"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+          <div class="signoff-label"><strong>Samuel — sign-off approved</strong><small id="ceo-3-date" class="mono">Not marked</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <label class="notes-label">Notes &amp; check-in comments</label>
+      <textarea data-notes="3" placeholder="Add observations, blockers, or feedback for this phase..."></textarea>
+    </div>
+  </section>
+
+  <div class="footer-bar">
+    <div class="savenote">Progress saves automatically to this browser · Last update: <strong id="lastUpdate" class="mono">—</strong></div>
+    <button class="btn-reset" id="resetBtn">Reset all progress</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = "sp_dev_pathway_v1";
+
+  const state = {
+    courses: {}, // "1-1": true/false
+    emp: {},     // "1": true/false
+    ceo: {},     // "1": true/false
+    empDate: {}, // "1": iso string
+    ceoDate: {}, // "1": iso string
+    notes: {},   // "1": text
+    lastUpdate: null
+  };
+
+  const PHASE_COURSE_COUNT = {1:3, 2:2, 3:2};
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        Object.assign(state, parsed);
+      }
+    }catch(e){ console.warn("Could not load saved progress", e); }
+  }
+
+  function save(){
+    state.lastUpdate = new Date().toISOString();
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){ console.warn("Could not save progress", e); }
+    renderLastUpdate();
+  }
+
+  function fmtDate(iso){
+    if(!iso) return "Not marked";
+    const d = new Date(iso);
+    return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+  }
+
+  function renderLastUpdate(){
+    const el = document.getElementById("lastUpdate");
+    el.textContent = state.lastUpdate ? fmtDate(state.lastUpdate) + " " + new Date(state.lastUpdate).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}) : "—";
+  }
+
+  function phasePercent(phase){
+    const total = PHASE_COURSE_COUNT[phase];
+    let done = 0;
+    for(let i=1;i<=total;i++){
+      if(state.courses[phase+"-"+i]) done++;
+    }
+    return Math.round((done/total)*100);
+  }
+
+  function overallPercent(){
+    // Weight: all courses + emp signoff + ceo signoff across all phases
+    let totalUnits = 0, doneUnits = 0;
+    [1,2,3].forEach(p=>{
+      const n = PHASE_COURSE_COUNT[p];
+      totalUnits += n + 2; // + emp + ceo signoff
+      for(let i=1;i<=n;i++){ if(state.courses[p+"-"+i]) doneUnits++; }
+      if(state.emp[p]) doneUnits++;
+      if(state.ceo[p]) doneUnits++;
+    });
+    return Math.round((doneUnits/totalUnits)*100);
+  }
+
+  function badgeFor(phase){
+    const pct = phasePercent(phase);
+    const ceoDone = !!state.ceo[phase];
+    if(ceoDone) return {cls:"badge-done", label:"Signed Off"};
+    if(pct === 100) return {cls:"badge-progress", label:"Ready for Review"};
+    if(pct > 0) return {cls:"badge-progress", label:"In Progress"};
+    return {cls:"badge-not", label:"Not Started"};
+  }
+
+  function renderAll(){
+    // courses
+    document.querySelectorAll("[data-course]").forEach(el=>{
+      const id = el.getAttribute("data-course");
+      const done = !!state.courses[id];
+      el.classList.toggle("done", done);
+    });
+
+    // phase bars + badges + roadmap
+    [1,2,3].forEach(p=>{
+      const pct = phasePercent(p);
+      document.querySelector('[data-phasebar="'+p+'"]').style.width = pct+"%";
+      document.querySelector('[data-phasepct="'+p+'"]').textContent = pct+"%";
+      const rb = document.getElementById("roadbar-"+p);
+      if(rb) rb.style.width = pct+"%";
+      const badge = document.getElementById("badge-"+p);
+      const info = badgeFor(p);
+      badge.className = "roadmap-badge " + info.cls;
+      badge.textContent = info.label;
+    });
+
+    // signoffs
+    [1,2,3].forEach(p=>{
+      const empOn = !!state.emp[p];
+      const ceoOn = !!state.ceo[p];
+      const empEl = document.querySelector('[data-signoff="emp-'+p+'"]');
+      const ceoEl = document.querySelector('[data-signoff="ceo-'+p+'"]');
+      empEl.classList.toggle("checked", empOn);
+      ceoEl.classList.toggle("checked", ceoOn);
+      document.getElementById("emp-"+p+"-date").textContent = empOn ? fmtDate(state.empDate[p]) : "Not marked";
+      document.getElementById("ceo-"+p+"-date").textContent = ceoOn ? fmtDate(state.ceoDate[p]) : "Not marked";
+    });
+
+    // notes
+    document.querySelectorAll("[data-notes]").forEach(ta=>{
+      const p = ta.getAttribute("data-notes");
+      if(state.notes[p] !== undefined && ta.value !== state.notes[p]) ta.value = state.notes[p];
+    });
+
+    // overall
+    const overall = overallPercent();
+    document.getElementById("topRailFill").style.width = overall+"%";
+    document.getElementById("topRailPct").textContent = overall+"%";
+    document.getElementById("stampPct").textContent = overall+"%";
+    const stamp = document.getElementById("overallStamp");
+    stamp.classList.toggle("complete", overall === 100);
+
+    const tbStatus = document.getElementById("tbStatus");
+    tbStatus.textContent = overall === 0 ? "Not Started" : overall === 100 ? "Complete" : "In Progress";
+
+    renderLastUpdate();
+  }
+
+  // ---- event wiring ----
+  document.querySelectorAll("[data-check]").forEach(box=>{
+    box.addEventListener("click", ()=>{
+      const id = box.getAttribute("data-check");
+      if(id.startsWith("emp-")){
+        const p = id.split("-")[1];
+        state.emp[p] = !state.emp[p];
+        state.empDate[p] = state.emp[p] ? new Date().toISOString() : null;
+      } else if(id.startsWith("ceo-")){
+        const p = id.split("-")[1];
+        state.ceo[p] = !state.ceo[p];
+        state.ceoDate[p] = state.ceo[p] ? new Date().toISOString() : null;
+      } else {
+        state.courses[id] = !state.courses[id];
+      }
+      save();
+      renderAll();
+    });
+  });
+
+  document.querySelectorAll("[data-notes]").forEach(ta=>{
+    let t;
+    ta.addEventListener("input", ()=>{
+      clearTimeout(t);
+      t = setTimeout(()=>{
+        state.notes[ta.getAttribute("data-notes")] = ta.value;
+        save();
+      }, 400);
+    });
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    if(confirm("Reset all progress, sign-offs, and notes? This cannot be undone.")){
+      state.courses = {}; state.emp = {}; state.ceo = {};
+      state.empDate = {}; state.ceoDate = {}; state.notes = {};
+      document.querySelectorAll("[data-notes]").forEach(ta=> ta.value = "");
+      save();
+      renderAll();
+    }
+  });
+
+  load();
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
